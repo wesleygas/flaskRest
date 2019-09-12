@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import requests
+
+
+
+args = sys.argv
+IPADDR = os.environ.get("RESTSERV")
+#URL = IPADDR + "/tasks"
+#print(URL)
+#r = requests.get(URL)
+#print(r.json())
+
+comando = args[1]
+
+if(comando == "-h" or comando == "--help"):
+    print("""
+        adicionar [titulo] [corpo]
+        listar
+        buscar [id]
+        apagar [id]
+        atualizar [id] [titulo] [corpo]
+    """)
+
+if(comando == "adicionar"):
+    #ADICIONAR A TAREFA COM
+    URL = IPADDR + "/tasks"
+    title = args[2]
+    body = args[3]
+    print("Adicionando tarefa '{} -> {}'".format(title,body))
+    r = requests.post(URL, json={"title":title,"body":body})
+    print(r.json())
+
+elif(comando == "listar"):
+    ##Recebe e lista todas as tarefas
+    URL = IPADDR + "/tasks"
+    r = requests.get(URL)
+    tarefas = r.json()
+    print("Listando todas as tarefas:")
+    for i in tarefas:
+        if(tarefas[i] != None):
+            print(tarefas[i])
+
+elif(comando == "buscar"):
+    ##Busca a tarefa X
+    id = args[2]
+    URL = IPADDR + "/tasks/" + id
+    print("Buscando tarefa {}".format(id))
+    r = requests.get(URL)
+    print(r.json())
+
+elif(comando == "apagar"):
+    ##Apaga a tarefa X
+    id = args[2]
+    URL = IPADDR + "/tasks/" + id
+    r = requests.delete(URL)
+    print("Apagando tarefa {}".format(id))
+
+elif(comando == "atualizar"):
+    ##Atualiza a tarefa X com y
+    id = args[2]
+    URL = IPADDR + "/tasks/" + id
+    title = args[3]
+    body = args[4]
+    print("Atualizando tarefa {} para '{} -> {}'".format(id, title, body))
+    r = requests.put(URL,json={"title":title,"body":body})
